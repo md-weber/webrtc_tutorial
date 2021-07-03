@@ -161,6 +161,8 @@ class Signaling {
       var answer = await peerConnection!.createAnswer();
       print('Created Answer $answer');
 
+      await peerConnection!.setLocalDescription(answer);
+
       Map<String, dynamic> roomWithAnswer = {
         'answer': {'type': answer.type, 'sdp': answer.sdp}
       };

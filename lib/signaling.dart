@@ -191,14 +191,10 @@ class Signaling {
   Future<void> openUserMedia(
       RTCVideoRenderer localVideo, RTCVideoRenderer remoteVideo) async {
     var stream = await navigator.mediaDevices
-        .getUserMedia({'video': true, 'audio': true});
-
-    print("Hier");
+        .getUserMedia({'video': true, 'audio': false});
 
     localVideo.srcObject = stream;
     localStream = stream;
-
-    print("Hier");
 
     remoteVideo.srcObject = await createLocalMediaStream('key');
 

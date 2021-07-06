@@ -43,14 +43,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _remoteRenderer.initialize();
 
     signaling.onAddRemoteStream = ((stream) {
-      print("=============>>>===>>==>>>===>>>");
-      print(stream.active);
-      print(stream.id);
-      print(_remoteRenderer.renderVideo);
-      print(_remoteRenderer.srcObject?.getTracks().length);
-
-      print("=============>>>===>>==>>>===>>>");
-
       _remoteRenderer.srcObject = stream;
       setState((){});
 
@@ -120,32 +112,32 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           SizedBox(height: 8),
           Expanded(
-            child: Row(
-              children: [
-                SizedBox(
-                  child: RTCVideoView(_localRenderer, mirror: true),
-                  width: 200,
-                  height: 200,
-                ),
-                SizedBox(width: 10),
-                SizedBox(
-                  child: RTCVideoView(_remoteRenderer),
-                  width: 200,
-                  height: 200,
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(child: RTCVideoView(_localRenderer, mirror: true)),
+                  Expanded(child: RTCVideoView(_remoteRenderer)),
+                ],
+              ),
             ),
           ),
-          Expanded(
-            child: Column(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text("Join the following Room: "),
-                TextFormField(
-                  controller: textEditingController,
+                Flexible(
+                  child: TextFormField(
+                    controller: textEditingController,
+                  ),
                 )
               ],
             ),
-          )
+          ),
+          SizedBox(height: 8)
         ],
       ),
     );

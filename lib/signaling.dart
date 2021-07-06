@@ -38,9 +38,9 @@ class Signaling {
       peerConnection?.addTrack(track, localStream!);
     });
 
-    // Code for collecting ICE candidates below
+    // TODO: Code for collecting ICE candidates below
 
-    // Add code for creating a room
+    // TODO: Add code for creating a room
 
     peerConnection?.onTrack = (RTCTrackEvent event) {
       print('Got remote track: ${event.streams[0]}');
@@ -51,9 +51,9 @@ class Signaling {
       });
     };
 
-    // Listening for remote session description below
+    // TODO: Listening for remote session description below
 
-    // Listen for remote Ice candidates below
+    // TODO: Listen for remote Ice candidates below
 
     return "roomId";
   }
@@ -74,7 +74,7 @@ class Signaling {
         peerConnection?.addTrack(track, localStream!);
       });
 
-      // Code for collecting ICE candidates below
+      // TODO: Code for collecting ICE candidates below
 
       peerConnection?.onTrack = (RTCTrackEvent event) {
         print('Got remote track: ${event.streams[0]}');
@@ -84,9 +84,9 @@ class Signaling {
         });
       };
 
-      // Code for creating SDP answer below
+      // TODO: Code for creating SDP answer below
 
-      // Listening for remote ICE candidates below
+      // TODO: Listening for remote ICE candidates below
     }
   }
 

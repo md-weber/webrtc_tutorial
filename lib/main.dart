@@ -44,9 +44,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     signaling.onAddRemoteStream = ((stream) {
       _remoteRenderer.srcObject = stream;
-      setState((){});
-
+      setState(() {});
     });
+
     super.initState();
   }
 

@@ -109,13 +109,6 @@ class Signaling {
   }
 
   Future<void> joinRoom(String roomId, RTCVideoRenderer remoteVideo) async {
-    // read roomid from textbox
-    print('Join room $roomId');
-    // set text with roomid in UI
-    await joinRoomById(roomId, remoteVideo);
-  }
-
-  joinRoomById(String roomId, RTCVideoRenderer remoteVideo) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
     DocumentReference roomRef = db.collection('rooms').doc('$roomId');
     var roomSnapshot = await roomRef.get();
@@ -189,7 +182,9 @@ class Signaling {
   }
 
   Future<void> openUserMedia(
-      RTCVideoRenderer localVideo, RTCVideoRenderer remoteVideo) async {
+    RTCVideoRenderer localVideo,
+    RTCVideoRenderer remoteVideo,
+  ) async {
     var stream = await navigator.mediaDevices
         .getUserMedia({'video': true, 'audio': false});
 
@@ -197,8 +192,6 @@ class Signaling {
     localStream = stream;
 
     remoteVideo.srcObject = await createLocalMediaStream('key');
-
-    print('Stream: ${localVideo.srcObject}');
   }
 
   Future<void> hangUp(RTCVideoRenderer localVideo) async {

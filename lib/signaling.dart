@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+
+typedef void StreamStateCallback(MediaStream stream);
 
 class Signaling {
   Map<String, dynamic> configuration = {
@@ -17,9 +21,12 @@ class Signaling {
   MediaStream? localStream;
   MediaStream? remoteStream;
   String? roomId;
+  String? currentRoomText;
+  StreamStateCallback? onAddRemoteStream;
 
-  createRoom() async {
+  Future<String> createRoom(RTCVideoRenderer remoteRenderer) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
+    DocumentReference roomRef = db.collection('rooms').doc();
 
     print('Create PeerConnection with configuration: $configuration');
 
@@ -27,15 +34,13 @@ class Signaling {
 
     registerPeerConnectionListeners();
 
-    // Add code for creating a room
-
     localStream?.getTracks().forEach((track) {
       peerConnection?.addTrack(track, localStream!);
     });
 
-    // Code for creating a room below
-
     // Code for collecting ICE candidates below
+
+    // Add code for creating a room
 
     peerConnection?.onTrack = (RTCTrackEvent event) {
       print('Got remote track: ${event.streams[0]}');
@@ -46,19 +51,14 @@ class Signaling {
       });
     };
 
-    // listening for remote session description below
+    // Listening for remote session description below
 
     // Listen for remote Ice candidates below
+
+    return "roomId";
   }
 
-  Future<void> joinRoom() async {
-    // read roomid from textbox
-    print('Join room $roomId');
-    // set text with roomid in UI
-    await joinRoomById();
-  }
-
-  joinRoomById() async {
+  Future<void> joinRoom(String roomId) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
     DocumentReference roomRef = db.collection('rooms').doc('$roomId');
     var roomSnapshot = await roomRef.get();
@@ -91,7 +91,9 @@ class Signaling {
   }
 
   Future<void> openUserMedia(
-      event, RTCVideoRenderer localVideo, RTCVideoRenderer remoteVideo) async {
+    RTCVideoRenderer localVideo,
+    RTCVideoRenderer remoteVideo,
+  ) async {
     var stream = await navigator.mediaDevices.getUserMedia(
       {'video': true, 'audio': true},
     );
@@ -99,20 +101,18 @@ class Signaling {
     localVideo.srcObject = stream;
     localStream = stream;
 
-    remoteStream = await createLocalMediaStream('remote');
-    remoteVideo.srcObject = remoteStream;
-
-    print('Stream: ${localVideo.srcObject}');
+    remoteVideo.srcObject = await createLocalMediaStream('key');
   }
 
-  Future<void> hangUp(event, RTCVideoRenderer localVideo) async {
+  Future<void> hangUp(RTCVideoRenderer localVideo) async {
     List<MediaStreamTrack> tracks = localVideo.srcObject!.getTracks();
     tracks.forEach((track) {
       track.stop();
     });
 
-    if (remoteStream != null)
+    if (remoteStream != null) {
       remoteStream!.getTracks().forEach((track) => track.stop());
+    }
     if (peerConnection != null) peerConnection!.close();
 
     if (roomId != null) {
@@ -126,6 +126,9 @@ class Signaling {
 
       await roomRef.delete();
     }
+
+    localStream!.dispose();
+    remoteStream?.dispose();
   }
 
   void registerPeerConnectionListeners() {
@@ -143,6 +146,12 @@ class Signaling {
 
     peerConnection?.onIceGatheringState = (RTCIceGatheringState state) {
       print('ICE connection state change: $state');
+    };
+
+    peerConnection?.onAddStream = (MediaStream stream) {
+      print("Add remote stream");
+      onAddRemoteStream?.call(stream);
+      remoteStream = stream;
     };
   }
 }

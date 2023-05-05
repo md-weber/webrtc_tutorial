@@ -93,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {
                   // Add roomId
                   signaling.joinRoom(
-                    textEditingController.text,
+                    textEditingController.text.trim(),
                     _remoteRenderer,
                   );
                 },

@@ -126,7 +126,7 @@ class Signaling {
 
       // Code for collecting ICE candidates below
       var calleeCandidatesCollection = roomRef.collection('calleeCandidates');
-      peerConnection!.onIceCandidate = (RTCIceCandidate candidate) {
+      peerConnection!.onIceCandidate = (RTCIceCandidate? candidate) {
         if (candidate == null) {
           print('onIceCandidate: complete!');
           return;
